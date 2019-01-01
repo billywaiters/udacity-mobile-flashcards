@@ -1,61 +1,89 @@
-import React from 'react'
+import React from 'react';
+import { AsyncStorage } from 'react-native';
+import { Notifications, Permissions } from 'expo';
 
-export function getDecks () {
-   const decks = {
-      Math: {
-         title: 'Math',
-         questions : [
-            {
-               question: 'What is the square root of 225?',
-               answer: '15'
-            },
-            {
-               question: 'What is the square root of 196?',
-               answer: '13'
-            },
-            {
-               question: 'What is the square root of 169?',
-               answer: '13'
-            },
+const NOTIFICATION_KEY = 'MobielFlashcards:notifications'
 
-         ]
+export function clearLocalNotification () {
+   return AsyncStorage.removeItem(NOTIFICATION_KEY)
+   .then(Notifications.cancelScheduledNotificationAsync)
+}
+
+// export function setLocalNotification () {
+//    AsyncStorage.getItem(NOTIFICATION_KEY)
+//    .then(JSON.parse)
+//    .then((data) => {
+//       if (data  === null) {
+//          PermissionRequest.askAsync(Permmisions.NOTIFICATIONS)
+//          .then(({status}) => {
+//             if (status === 'granted') {
+//                Notifications.cancelScheduledNotificationsAsync();
+ 
+//                let tomorrow = new Date();
+//                tomorrow.setDate(tomorrow.getDate() + 1);
+//                tomorrow.setHours(20);
+//                tomorrow.setMinutes(0);
+ 
+//                Notifications.scheduleLocalNotificationAsync (
+//                   createNotification(),
+//                   {
+//                      time: tomorrow,
+//                      repeat: 'day',
+//                   }
+//                )
+ 
+//                AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true));
+//             }
+//          }) 
+//       }
+//    })
+// }
+
+export function setLocalNotification () {
+   AsyncStorage.getItem(NOTIFICATION_KEY)
+     .then(JSON.parse)
+     .then((data) => {
+       if (data === null) {
+         Permissions.askAsync(Permissions.NOTIFICATIONS)
+           .then(({ status }) => {
+             if (status === 'granted') {
+               Notifications.cancelAllScheduledNotificationsAsync()
+ 
+               let tomorrow = new Date()
+               tomorrow.setDate(tomorrow.getDate() + 1)
+               tomorrow.setHours(20)
+               tomorrow.setMinutes(0)
+ 
+               Notifications.scheduleLocalNotificationAsync(
+                 createNotification(),
+                 {
+                   time: tomorrow,
+                   repeat: 'day',
+                 }
+               )
+ 
+               AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true))
+             }
+           })
+       }
+     })
+ }
+
+export function createNotification () {
+
+   return {
+      title: 'Study Time!',
+      body: 'Remember to Study Today!',
+      ios: {
+         sound: true,
       },
-      Chemistry: {
-         title: 'Chemistry',
-         questions: [
-            {
-               question: 'What is the chemical formula for water?',
-               answer: 'H2O'
-            },
-            {
-               question: 'What is the chemical formula for hyudrogen peroxide?',
-               answer: 'H2O2'
-            },
-            {
-               question: 'What is the chemical formula for methan?',
-               answer: 'CH4'
-            },
-            {
-               question: 'What is the chemical formula for 2 4-dinitrophenylhydrazine?',
-               answer: 'C6H6N4O4'
-            },
-
-         ]
-      }
-   }
-
-   return decks;
-}
-
-export function getDeck (deckId) {
-   let decks = getDecks();
-   return decks[deckId];
-}
-
-export function saveDeckTitle (title) {
+      android: {
+         sound: true,
+         priority: 'high',
+         sticky: false,
+         vibrate: true,
+      },
    
-}
-
-export function addCardToDeck (question, answer) {
+   }
    
 }

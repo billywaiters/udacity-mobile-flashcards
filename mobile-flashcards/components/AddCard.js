@@ -6,6 +6,12 @@ import { addCardToDeck } from '../utils/api'
 
 class AddCard extends Component {
 
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Add Card',
+    }
+  }
+
   state = {
     question: '',
     answer: '',
@@ -115,4 +121,4 @@ class AddCard extends Component {
  
  })
 
- export default AddCard // connect(mapStateToProps,)(AddCard)
+ export default AddCard 

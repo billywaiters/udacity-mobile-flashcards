@@ -1,13 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
-import reducer from './reducers'
+import { StyleSheet, View, Platform, StatusBar } from 'react-native';
 import { createBottomTabNavigator, createAppContainer, createStackNavigator  } from 'react-navigation';
 import { Constants } from 'expo';
 import { purple, white } from './utils/colors';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-
+import { setLocalNotification } from './utils/helpers'
 import Decks from './components/Decks';
 import Deck from './components/Deck';
 import AddDeck from './components/AddDeck';
@@ -28,7 +25,6 @@ function MFStatusBar({backgroundColor, ...props}) {
   )
 }
 
-
 /**
  * Create the tabs for Decks and for Add Deck
  * 
@@ -44,7 +40,6 @@ const Tabs = createBottomTabNavigator({
   AddDeck: {
     screen: AddDeck,
     navigationOptions: {
-      tabBarLabel: 'Add Deck',
       tabBarIcon: ({ tintColor }) => <FontAwesome name='plus-square' size={30} color={tintColor} />
     },
   }
@@ -79,6 +74,7 @@ const MainNavigator = createStackNavigator({
     screen: Deck,
     navigationOptions: ({ navigation }) => ({
       headerTintColor: white,
+      headerBackTitle: 'Deck',
       headerStyle: {
         backgroundColor: purple,
       },
@@ -104,22 +100,22 @@ const MainNavigator = createStackNavigator({
   },
 });
 
-// Just show tabs for now.... later show the main nav
-const TabsContainer = createAppContainer(MainNavigator); //MainNavigator);
+const TabsContainer = createAppContainer(MainNavigator); 
 
 export default class App extends React.Component {
 
+  componentDidMount () {
+    setLocalNotification();
+  }
+
 render() {
 
-
-    return (
-      <Provider store={createStore(reducer)}>
-        <View style={{flex: 1}}>
-        <MFStatusBar backgroundColor={purple} barStyle='light-content' />
-        <TabsContainer/>
-        </View>
-      </Provider>
-    );
+  return (
+    <View style={{flex: 1}}>
+      <MFStatusBar backgroundColor={purple} barStyle='light-content' />
+      <TabsContainer/>
+    </View>
+  );
   }
 }
 

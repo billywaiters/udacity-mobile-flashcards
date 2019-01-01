@@ -8,6 +8,17 @@ import { deleteDeck, getDeck } from '../utils/api'
 
 class Deck extends Component {
   
+  static navigationOptions = ({ navigation }) => {
+    const { title } = navigation.state.params
+
+    return {
+      title: title,
+      headerBackTitle: title,
+      headerBackTitleStyle: { color: 'pink'},
+    }
+  }
+
+
   state = {
     ready: false,
     title: '',

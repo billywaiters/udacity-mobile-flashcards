@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity, StyleSheet, Platform, Text } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { connect } from 'react-redux';
 import { white, purple }  from '../utils/colors';
-import AppButton from './AppButton';
 import { AppLoading } from 'expo';
 import {getDecks, initStorage} from '../utils/api';
-import { receiveDecks } from '../actions'
 
 export const DECKS_STORAGE_KEY = 'MobielFlashcards:decks';
 
@@ -22,6 +19,14 @@ function SelectDeck ({ onPress }) {
 
 class Decks extends Component {
  
+  static navigationOptions = () => {
+
+    return {
+      headerBackTitle: 'Decks',
+    }
+  }
+
+
   state = {
     ready: false,
     decks: null,
@@ -177,10 +182,4 @@ const styles = StyleSheet.create({
  })
  
 
-function mapStateToProps (decks) {
-   return {
-     decks,
-   }
- }
-
- export default connect(mapStateToProps,)(Decks)
+ export default Decks

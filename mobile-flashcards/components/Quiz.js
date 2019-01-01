@@ -1,15 +1,22 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-//import { connect } from 'react-redux';
 import TextButton from './TextButton';
 import AppButton from './AppButton';
 import { AppLoading } from 'expo';
 import { white, purple, red, green }  from '../utils/colors';
 import { getDeck } from '../utils/api';
+import { clearLocalNotificaiton } from '../utils/helpers';
 
 class Quiz extends Component {
 
-
+   static navigationOptions = ({ navigation }) => {
+      const { title } = navigation.state.params
+  
+      return {
+        title: title,
+      }
+    }
+  
 
    state = {
       ready: false,
@@ -23,7 +30,6 @@ class Quiz extends Component {
    componentDidMount () {
       const { navigation } = this.props;
       const title = navigation.getParam('title', null);
-      console.log("Quiz: Questions for " + title);
       getDeck(title)
       .then((deck) => {this.setState({ ready: true, title: title, deck: deck });
       })
@@ -51,6 +57,20 @@ class Quiz extends Component {
       });
    }
 
+   restart = () => {
+      this.setState( {
+         questionIndex: 0, 
+         correctAnswers: 0,
+       });
+
+   }
+
+   backToDeck = () => {
+
+      this.props.navigation.navigate('Deck', { title: this.state.title });
+
+   }
+
    render() {
 
       const {ready, title, deck } = this.state;
@@ -59,7 +79,16 @@ class Quiz extends Component {
          return <AppLoading />
        }
    
-   
+      if (deck.questions.length < 1) {
+         return (
+            <View style={styles.container}>
+            <View style={styles.topContainer}>
+              <Text style={styles.titleText}>The deck contains no questions.</Text> 
+              <Text style={styles.titleText}>Please return to the Deck screen and select Add Card to add a question to the Deck.</Text> 
+            </View>
+         </View>    
+         )
+      }
 
       if (this.state.questionIndex >= deck.questions.length) {
          let percent = this.state.correctAnswers / deck.questions.length * 100;
@@ -71,6 +100,10 @@ class Quiz extends Component {
                <View style={styles.topContainer}>
                  <Text style={styles.titleText}>{resultString}</Text> 
                  <Text style={styles.titleText}>{percentString}</Text>
+               </View>
+               <View style={styles.bottomContainer}>
+                <AppButton onPress={this.restart} label='Restart Quiz' style={{backgroundColor: 'green'}}/>
+                <AppButton onPress={this.backToDeck} label='Return to Deck' style={{backgroundColor: 'red'}} />
                </View>
             </View> 
          )
@@ -91,7 +124,7 @@ class Quiz extends Component {
            <TextButton onPress={this.showAnswerOrQuestion} style={styles.answerText}>{ this.state.showingQuestion ? 'Answer' : 'Question'}</TextButton>
          </View>
          <View style={styles.bottomContainer}>
-            <AppButton onPress={this.answerWasCorrect} label='Correct' style={{backgroundColor: 'green'}}/>
+           <AppButton onPress={this.answerWasCorrect} label='Correct' style={{backgroundColor: 'green'}}/>
            <AppButton onPress={this.answerWasIncorrect} label='Incorrect' style={{backgroundColor: 'red'}} />
          </View>
          </View>
@@ -153,4 +186,4 @@ class Quiz extends Component {
  
  })
 
- export default Quiz //connect(mapStateToProps,)(Quiz)
+ export default Quiz 

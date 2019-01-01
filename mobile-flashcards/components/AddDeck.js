@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native'
-import { connect } from 'react-redux'
+import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import AppButton from './AppButton';
 import { white, purple, red }  from '../utils/colors';
 import { saveDeckTitle } from '../utils/api'
 
 class AddDeck extends Component {
+
+  static navigationOptions = () => {
+
+    return {
+      title: 'Add Deck',
+    }
+  }
+
 
   
   state = {
@@ -27,7 +34,7 @@ class AddDeck extends Component {
    render() {
  
       return (
-         <View style={styles.container}>
+         <KeyboardAvoidingView behavior="padding" style={styles.container}>
             <View style={styles.topContainer}>
              <Text style={styles.titleText}>What is the title of you new deck?</Text>
              <TextInput placeholder='Deck Title'  style={styles.textInput} onChangeText={(text) => this.setState({deckName: text})}/>
@@ -35,7 +42,7 @@ class AddDeck extends Component {
            <View style={styles.bottomContainer}>
            <AppButton onPress={this.addNewDeck} label='Submit' />
            </View>
-         </View>
+         </KeyboardAvoidingView>
       )
    }
 
@@ -96,4 +103,4 @@ function mapStateToProps (entries) {
  })
 
 
- export default connect(mapStateToProps,)(AddDeck)
+ export default AddDeck
